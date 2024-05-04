@@ -1,0 +1,37 @@
+C51 COMPILER V9.54   TIMER0                                                                01/31/2024 12:50:39 PAGE 1   
+
+
+C51 COMPILER V9.54, COMPILATION OF MODULE TIMER0
+OBJECT MODULE PLACED IN .\Objects\timer0.obj
+COMPILER INVOKED BY: E:\download_browser\Keil_1\C51\BIN\C51.EXE timer0.c OPTIMIZE(8,SPEED) BROWSE DEBUG OBJECTEXTEND PRI
+                    -NT(.\Listings\timer0.lst) OBJECT(.\Objects\timer0.obj)
+
+line level    source
+
+   1          #include <REGX52.H>
+   2          
+   3          void Timer0_Init()      
+   4          {
+   5   1              TMOD = 0x01;            //设置定时器模式
+   6   1              TL0 = 0x06;                     //0.25ms
+   7   1              TH0 = 0xFF;
+   8   1              ET0 = 1;                //打开定时器0的中断
+   9   1              TF0 = 0;                        //清除溢出中断标志位
+  10   1              //TR0 = 1;                      //定时器0开始计时
+  11   1              EA = 1;                 //开总中断
+  12   1              PT0 = 0;            //设置定时器0的中断优先级
+  13   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =     18    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

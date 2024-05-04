@@ -1,0 +1,86 @@
+C51 COMPILER V9.54   MAIN                                                                  02/01/2024 18:16:24 PAGE 1   
+
+
+C51 COMPILER V9.54, COMPILATION OF MODULE MAIN
+OBJECT MODULE PLACED IN .\Objects\main.obj
+COMPILER INVOKED BY: E:\download_browser\Keil_1\C51\BIN\C51.EXE main.c OPTIMIZE(8,SPEED) BROWSE DEBUG OBJECTEXTEND PRINT
+                    -(.\Listings\main.lst) OBJECT(.\Objects\main.obj)
+
+line level    source
+
+   1          #include <REGX52.H>
+   2          #include "LCD1602.h"
+   3          #include "DS18B20.h"
+   4          #include "Delay.h"
+   5          #include "timer0.h"
+   6          
+   7          float T;
+   8          unsigned int k;
+   9          sbit SG_PWM=P2^0;                                                       
+  10          unsigned char count=0;                                       
+  11          unsigned char PWM_count=0;    
+  12          
+  13          void main()
+  14          {
+  15   1              DS18B20_ConvertT();             //上电先转换一次温度，防止第一次读数据错误
+  16   1              Delay(1000);                    //等待转换完成
+  17   1              LCD_Init();
+  18   1              Timer0_Init();
+  19   1              LCD_ShowString(1,1,"Temperature:");
+  20   1              
+  21   1              while(1)
+  22   1              {
+  23   2                      TR0 = 0;
+  24   2                      DS18B20_ConvertT();     //转换温度
+  25   2                      T=DS18B20_ReadT();      //读取温度
+  26   2                      if(T<0)                         //如果温度小于0
+  27   2                      {
+  28   3                              LCD_ShowChar(2,1,'-');  //显示负号
+  29   3                              T=-T;                   //将温度变为正数
+  30   3                      }
+  31   2                      else                            //如果温度大于等于0
+  32   2                      {
+  33   3                              LCD_ShowChar(2,1,'+');  //显示正号
+  34   3                      }
+  35   2                      LCD_ShowNum(2,2,T,3);           //显示温度整数部分
+  36   2                      LCD_ShowChar(2,5,'.');          //显示小数点
+  37   2                      LCD_ShowNum(2,6,(unsigned long)(T*10000)%10000,4);//显示温度小数部分
+  38   2                      if(T > 38.0)
+  39   2                      {
+  40   3                              k++;
+  41   3                              if(k<=1) TR0=1;
+  42   3                              PWM_count = 9;
+  43   3                              Delay(2000);
+  44   3                              PWM_count = 2;
+  45   3                              Delay(1000);
+  46   3                      }
+  47   2              }
+  48   1      }
+  49          
+  50          void Timer0() interrupt 1    
+  51          {
+  52   1              TL0 = 0x06;                             
+  53   1              TH0 = 0xFF;                                     //0.25ms
+  54   1        if(count < PWM_count) SG_PWM=1;
+C51 COMPILER V9.54   MAIN                                                                  02/01/2024 18:16:24 PAGE 2   
+
+  55   1        else SG_PWM=0;
+  56   1              
+  57   1              count++;  
+  58   1        count%=80;    
+  59   1      }   
+  60          
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    288    ----
+   CONSTANT SIZE    =     13    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =      8    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)
